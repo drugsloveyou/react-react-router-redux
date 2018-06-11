@@ -1,64 +1,51 @@
-const path = require("path");
-const glob = require("glob");
-const webpack = require("webpack");
+const path = require('path');
+const glob = require('glob-all');
+const webpack = require('webpack');
+const merge = require('webpack-merge');
+const baseConfig = require('./webpack.base.config');
 
-const CopyWebpackPlugin = require("copy-webpack-plugin"); // 复制静态资源的插件
-const CleanWebpackPlugin = require("clean-webpack-plugin"); // 清空打包目录的插件
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyWebpackPlugin = require('copy-webpack-plugin'); // 复制静态资源的插件
+const CleanWebpackPlugin = require('clean-webpack-plugin'); // 清空打包目录的插件
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 // const UglifyJsPlugin = require("uglifyjs-webpack-plugin"); //js代码压缩插件
-const WebpackParallelUglifyPlugin = require("webpack-parallel-uglify-plugin");
+const WebpackParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
 
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 //css压缩插件
-const OptimizeCSSPlugin = require("optimize-css-assets-webpack-plugin");
+const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
 //css按需加载
-const PurifyCSSPlugin = require("purifycss-webpack");
-
-module.exports = require("./webpack.base.config")({
+const PurifyCSSPlugin = require('purifycss-webpack');
+const postcssOptions = require('./postcssConfig');
+module.exports = merge(baseConfig, {
   entry: {
-    polyfill: ["babel-polyfill"],
+    polyfill: ['babel-polyfill'],
     main: [
       // path.join(process.cwd(), "src/prod.js")
-      path.join(process.cwd(), "src/example/Todos/index.js")
+      path.join(process.cwd(), 'src/example/Todomvc/index.js')
     ]
   },
 
   output: {
     // 这里是文件名配置规则
-    filename: "[name].[chunkhash:5].js",
+    filename: '[name].[chunkhash:5].js',
     // 文件块名配置规则
-    chunkFilename: "[name].[chunkhash:5].chunk.js",
+    chunkFilename: '[name].[chunkhash:5].chunk.js',
     // 这里根据实际的上限规则配置
-    publicPath: ""
+    publicPath: '/'
   },
   module: {
     rules: [
-      // {
-      //   test: /\.css/,
-      //   exclude: /node_modules/,
-      //   use: [
-      //     "css-hot-loader",
-      //     MiniCssExtractPlugin.loader,
-      //     "css-loader"
-      //   ]
-      // },
       {
         //处理自己的css文件
         test: /\.css$/,
         exclude: /node_modules/,
         use: [
           MiniCssExtractPlugin.loader,
-          "css-loader",
+          { loader: 'css-loader', options: { importLoaders: 1 } },
           {
-            loader: "postcss-loader",
-            options: {
-              autoprefixer:
-                true ||
-                {
-                  /*自己的配置*/
-                }
-            }
+            loader: 'postcss-loader',
+            options: postcssOptions
           }
         ]
       },
@@ -68,9 +55,12 @@ module.exports = require("./webpack.base.config")({
         exclude: /node_modules/,
         use: [
           MiniCssExtractPlugin.loader,
-          { loader: "css-loader", options: { importLoaders: 1 } },
-          "postcss-loader",
-          "sass-loader"
+          { loader: 'css-loader', options: { importLoaders: 1 } },
+          {
+            loader: 'postcss-loader',
+            options: postcssOptions
+          },
+          'sass-loader'
         ]
       },
       {
@@ -79,26 +69,25 @@ module.exports = require("./webpack.base.config")({
         exclude: /node_modules/,
         use: [
           MiniCssExtractPlugin.loader,
-          { loader: "css-loader", options: { importLoaders: 1 } },
-          "postcss-loader",
-          "less-loader"
+          { loader: 'css-loader', options: { importLoaders: 1 } },
+          {
+            loader: 'postcss-loader',
+            options: postcssOptions
+          },
+          'less-loader'
         ]
       },
       {
         //编译处于node_modules中的css文件
         test: /\.css$/,
         include: /node_modules/,
-        use: [MiniCssExtractPlugin.loader, "css-loader"]
+        use: [MiniCssExtractPlugin.loader, 'css-loader']
       },
       {
         test: /\.(js|jsx)$/,
-        enforce: "post",
-        loaders: ["es3ify-loader"]
-        // include: [
-        //   path.resolve(process.cwd(), "./src"),
-        //   // path.resolve(process.cwd(), "./node_modules/redux"),
-        //   path.resolve(process.cwd(), "./node_modules/babel-polyfill")
-        // ]
+        enforce: 'post',
+        loaders: ['es3ify-loader'],
+        include: [path.resolve(process.cwd(), './src')]
       }
     ]
   },
@@ -110,8 +99,8 @@ module.exports = require("./webpack.base.config")({
     splitChunks: {
       cacheGroups: {
         commons: {
-          chunks: "initial", //有三个值可能"initial"，"async"和"all"。配置时，优化只会选择初始块，按需块或所有块。
-          name: "common", //名字
+          chunks: 'initial', //有三个值可能"initial"，"async"和"all"。配置时，优化只会选择初始块，按需块或所有块。
+          name: 'common', //名字
           minChunks: 2, //分割前的代码最大块数
           maxInitialRequests: 5, // entry(入口)的并行请求数
           minSize: 30000 // 最小值
@@ -119,7 +108,7 @@ module.exports = require("./webpack.base.config")({
       }
     },
     //是否压缩
-    minimize: false,
+    minimize: true,
     minimizer: [
       // 多入口使用
       new WebpackParallelUglifyPlugin({
@@ -138,26 +127,11 @@ module.exports = require("./webpack.base.config")({
           ie8: true // 兼容ie8的精髓，简单且强大
         }
       })
-      // 单入口使用（如果多入口使用和这个，编译后的js会有问题[真的坑]）
-      // new UglifyJsPlugin({
-      //   uglifyOptions: {
-      //     compress: {
-      //       properties: false,
-      //       warnings: false
-      //     },
-      //     output: {
-      //       // beautify: true,
-      //       quote_keys: true
-      //     },
-      //     ie8: true
-      //   },
-      //   sourceMap: true
-      // })
     ]
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "src/index.html",
+      template: 'src/index.html',
       // 页面压缩相关配置
       minify: {
         removeComments: true,
@@ -177,20 +151,20 @@ module.exports = require("./webpack.base.config")({
       cssProcessorOptions: { safe: true }
     }),
     new PurifyCSSPlugin({
-      paths: glob.sync(path.resolve(process.cwd(), "src/*.html"))
+      paths: glob.sync(path.resolve(process.cwd(), 'src/**/*.js'))
     }),
     new MiniCssExtractPlugin({
-      filename: "[name].css",
-      chunkFilename: "[id].css"
+      filename: '[name].css',
+      chunkFilename: '[id].css'
     }),
-    new CopyWebpackPlugin([
-      {
-        from: path.resolve(process.cwd(), "src/lib"), //lib对象文件夹
-        to: path.resolve(process.cwd(), "build/lib"), //lib目标文件夹
-        ignore: [".*"]
-      }
-    ]),
-    new CleanWebpackPlugin(["build"], {
+    // new CopyWebpackPlugin([
+    //   {
+    //     from: path.resolve(process.cwd(), 'src/lib'), //lib对象文件夹
+    //     to: path.resolve(process.cwd(), 'build/lib'), //lib目标文件夹
+    //     ignore: ['.*']
+    //   }
+    // ]),
+    new CleanWebpackPlugin(['build'], {
       root: path.resolve(process.cwd()),
       verbose: true,
       dry: false
@@ -200,5 +174,12 @@ module.exports = require("./webpack.base.config")({
   performance: {
     assetFilter: assetFilename =>
       !/(\.map$)|(^(main\.|favicon\.))/.test(assetFilename)
+  },
+  resolve: {
+    //   modules: ["app", "node_modules"],
+    //   extensions: [".js", ".jsx", ".react.js"],
+    //   alias: {} //配置别名可以加快webpack查找模块的速度
+    // mainFields: ["browser", "jsnext:main", "main"]
+    mainFields: ['main']
   }
 });

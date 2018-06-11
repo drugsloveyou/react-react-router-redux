@@ -26,13 +26,15 @@
             "useBuiltIns": true,
             "debug": true
           }
-        ]
+        ],
+        "stage-0"
       ],
       "plugins": [
         "add-module-exports",
         "transform-class-properties",
         "syntax-async-generators",
         "transform-object-rest-spread",
+        "transform-function-bind",
         "transform-react-remove-prop-types",
         "transform-react-constant-elements",
         "transform-react-inline-elements"
