@@ -3,7 +3,7 @@
  * @Author: xiezuobing(948466)[435321508@qq.com]
  * @Date: 2018-05-18 21:20:36
  * @Last Modified by: xiezuobing
- * @Last Modified time: 2018-06-07 19:42:19
+ * @Last Modified time: 2018-06-11 16:19:06
  */
 const path = require('path');
 const webpack = require('webpack');
@@ -12,6 +12,7 @@ const webpackHotMiddleware = require('webpack-hot-middleware');
 const proxy = require('http-proxy-middleware'); //proxy
 
 const setupApi = require('./api');
+const handlebars = require('handlebars');
 
 function createWebpackMiddleware(compiler, publicPath) {
   return webpackDevMiddleware(compiler, {
@@ -42,6 +43,9 @@ module.exports = function addDevMiddlewares(app, webpackConfig) {
   app.use('/api/*', apiProxy); //全目录下的都是用代理
   /****************/
 
+  // app.set('views', 'src');
+  // app.set('view engine', 'hbs');
+
   setupApi(app);
 
   app.get('/*', (req, res) => {
@@ -49,6 +53,9 @@ module.exports = function addDevMiddlewares(app, webpackConfig) {
       if (err) {
         res.sendStatus(404);
       } else {
+        // const template = handlebars.compile(file.toString());
+        // const context = { test: 1 };
+        // res.send(template(context));
         res.send(file.toString());
       }
     });

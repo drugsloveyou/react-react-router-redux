@@ -1,11 +1,30 @@
 import React from 'react';
-import { Router, Route, hashHistory, browserHistory, Link } from 'react-router';
+import {
+  Router,
+  Route,
+  hashHistory,
+  browserHistory,
+  Link,
+  useRouterHistory
+} from 'react-router';
 
-import Item from './Item';
+import { createHashHistory } from 'history';
 
-// const Item = props => <div>{console.log(props)}Item</div>;
+const history = useRouterHistory(createHashHistory)({
+  queryKey: false
+});
 
-const New = props => <div>{console.log(props)}New</div>;
+// import Item from './Item';
+
+const Item = props => <div>{console.log(props)}Item</div>;
+const NewItem = props => <div>NewItem</div>;
+
+const New = props => (
+  <div>
+    {console.log(props)}New<br />
+    {props.children}
+  </div>
+);
 
 const Test = props => <div>{console.log(props)}Test</div>;
 
@@ -17,6 +36,8 @@ const Root = ({ children }) => (
       </li>
       <li>
         <Link to="/new/1.1">path/to/New</Link>
+        <br />
+        <Link to="/newitem">path/to/newitem</Link>
       </li>
       <li>
         <Link to="/test" query={{ j: 1 }} hash="#test">
@@ -32,11 +53,13 @@ export default class App extends React.Component {
   render() {
     return (
       <div>
-        <Router history={browserHistory}>
+        <Router history={history}>
           <Route path="/" component={Root}>
-            <Route path="item(/:id)" component={Item} />
-            <Route path="new/*.*" component={New} />
-            <Route path="test" component={Test} />
+            <Route path="item/:id" component={Item} />
+            <Route path="new/*.*" component={New}>
+              <Route path="/newitem" component={NewItem} />
+            </Route>
+            <Route path="test*" component={Test} />
           </Route>
         </Router>
       </div>

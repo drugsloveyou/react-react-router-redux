@@ -12,8 +12,6 @@ class Counter extends Component {
     this.incrementIfOdd = this.incrementIfOdd.bind(this);
   }
 
-  
-
   incrementIfOdd() {
     if (this.props.value % 2 !== 0) {
       this.props.onIncrement();

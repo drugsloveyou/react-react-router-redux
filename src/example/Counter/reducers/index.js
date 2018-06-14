@@ -1,5 +1,5 @@
-import { handleActions, combineActions } from "redux-actions";
-import { INCREMENT, DECREMENT } from "../actions";
+// import { handleActions, combineActions } from 'redux-actions';
+// import { INCREMENT, DECREMENT } from '../actions';
 const defaultState = { value: 0 };
 // 【redux-action版reducer】
 // export default handleActions(
@@ -28,22 +28,21 @@ const defaultState = { value: 0 };
 //   },
 //   defaultState
 // );
-
 // 【正常版reducer】 / 【用redux-thunk】
-export default (state = { value: 0 }, action) => {
+
+export default (state = defaultState, action) => {
   switch (action.type) {
     case 'INCREMENT':
       return {
         ...state,
         value: state.value + 1
-      }
+      };
     case 'DECREMENT':
       return {
         ...state,
         value: state.value - 1
-      }
+      };
     default:
-      return state
+      return state;
   }
-}
-
+};

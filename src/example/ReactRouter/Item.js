@@ -1,4 +1,10 @@
 import React, { Component } from 'react';
+const Log = msg => {
+  console.log(
+    `%c ${msg} `,
+    `background-color: aqua; color: black;font-size: 20px`
+  );
+};
 
 class Item extends Component {
   state = {
@@ -8,50 +14,55 @@ class Item extends Component {
   static defaultProps = {
     count: 'defaultProps'
   };
-
+  
   constructor(props) {
     super(props);
-    console.log('constructor');
+    Log(`props: => ${JSON.stringify(this.props)}`);
+    Log(`state: => ${JSON.stringify(this.state)}`);
+
+    Log('constructor');
   }
 
   componentWillMount() {
-    console.log('componentWillMount');
+    Log('componentWillMount');
   }
 
   componentDidMount() {
-    console.log('componentDidMount');
+    Log('componentDidMount');
   }
 
   componentWillUnmount() {
-    console.log('componentWillUnmount');
+    Log('componentWillUnmount');
   }
 
   componentWillReceiveProps() {
-    console.log('componentWillReceiveProps');
+    Log('componentWillReceiveProps');
   }
 
   shouldComponentUpdate() {
-    console.log('shouldComponentUpdate');
+    Log('shouldComponentUpdate');
     return true;
   }
 
   componentWillUpdate() {
-    console.log('componentWillUpdate');
+    Log('componentWillUpdate');
   }
 
   componentDidUpdate() {
-    console.log('componentDidUpdate');
+    Log('componentDidUpdate');
   }
 
   render() {
-    console.log('render');
+    Log('render');
     return (
-      <div
-        id="item"
-        onClick={() => {
-          this.setState({ test: this.state.test + 1 });
-        }}
-      >
+      <div id="item">
+        <h3
+          onClick={() => {
+            this.setState({ test: this.state.test + 1 });
+          }}
+        >
+          改变State
+        </h3>
         <hr />
         {/*console.log(this.props)*/}Item: {this.state.test}
         <br />
@@ -63,28 +74,21 @@ class Item extends Component {
 
 export default class List extends Component {
   state = {
-    count: 111
+    // count: 0
   };
 
   render() {
     return (
       <div>
-        <h4
+        <h3
           onClick={() => {
             this.setState({
-              count: this.state.count + 111
+              count: this.state.count ? this.state.count + 111 : 111
             });
           }}
         >
           改变props
-        </h4>
-        <h4
-          onClick={() => {
-            throw new Error('呵呵');
-          }}
-        >
-          错误
-        </h4>
+        </h3>
 
         <Item count={this.state.count} />
       </div>

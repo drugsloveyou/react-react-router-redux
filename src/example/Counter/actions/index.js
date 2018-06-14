@@ -1,4 +1,4 @@
-import { createAction } from 'redux-actions';
+// import { createAction } from 'redux-actions';
 import { INCREMENTTYPE, DECREMENTTYPE } from '../constants';
 
 //【redux-action版actionCreator】
