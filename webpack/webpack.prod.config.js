@@ -1,38 +1,39 @@
-const path = require('path');
-const glob = require('glob-all');
-const webpack = require('webpack');
-const merge = require('webpack-merge');
-const baseConfig = require('./webpack.base.config');
+const path = require("path");
+const glob = require("glob-all");
+const webpack = require("webpack");
+const merge = require("webpack-merge");
+const baseConfig = require("./webpack.base.config");
 
-const CopyWebpackPlugin = require('copy-webpack-plugin'); // 复制静态资源的插件
-const CleanWebpackPlugin = require('clean-webpack-plugin'); // 清空打包目录的插件
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require("copy-webpack-plugin"); // 复制静态资源的插件
+const CleanWebpackPlugin = require("clean-webpack-plugin"); // 清空打包目录的插件
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 // const UglifyJsPlugin = require("uglifyjs-webpack-plugin"); //js代码压缩插件
-const WebpackParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
+const WebpackParallelUglifyPlugin = require("webpack-parallel-uglify-plugin");
 
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 //css压缩插件
-const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
+const OptimizeCSSPlugin = require("optimize-css-assets-webpack-plugin");
 //css按需加载
-const PurifyCSSPlugin = require('purifycss-webpack');
-const postcssOptions = require('./postcssConfig');
+const PurifyCSSPlugin = require("purifycss-webpack");
+const postcssOptions = require("./postcssConfig");
+
 module.exports = merge(baseConfig, {
   entry: {
-    polyfill: ['babel-polyfill'],
+    polyfill: ["babel-polyfill"],
     main: [
       // path.join(process.cwd(), "src/prod.js")
-      path.join(process.cwd(), 'src/example/Todomvc/index.js')
+      path.join(process.cwd(), `src/example/${process.env.FOLDER}/index.js`)
     ]
   },
 
   output: {
     // 这里是文件名配置规则
-    filename: '[name].[chunkhash:5].js',
+    filename: "[name].[chunkhash:5].js",
     // 文件块名配置规则
-    chunkFilename: '[name].[chunkhash:5].chunk.js',
+    chunkFilename: "[name].[chunkhash:5].chunk.js",
     // 这里根据实际的上限规则配置
-    publicPath: '/'
+    publicPath: "/"
   },
   module: {
     rules: [
@@ -42,9 +43,9 @@ module.exports = merge(baseConfig, {
         exclude: /node_modules/,
         use: [
           MiniCssExtractPlugin.loader,
-          { loader: 'css-loader', options: { importLoaders: 1 } },
+          { loader: "css-loader", options: { importLoaders: 1 } },
           {
-            loader: 'postcss-loader',
+            loader: "postcss-loader",
             options: postcssOptions
           }
         ]
@@ -55,12 +56,12 @@ module.exports = merge(baseConfig, {
         exclude: /node_modules/,
         use: [
           MiniCssExtractPlugin.loader,
-          { loader: 'css-loader', options: { importLoaders: 1 } },
+          { loader: "css-loader", options: { importLoaders: 1 } },
           {
-            loader: 'postcss-loader',
+            loader: "postcss-loader",
             options: postcssOptions
           },
-          'sass-loader'
+          "sass-loader"
         ]
       },
       {
@@ -69,25 +70,25 @@ module.exports = merge(baseConfig, {
         exclude: /node_modules/,
         use: [
           MiniCssExtractPlugin.loader,
-          { loader: 'css-loader', options: { importLoaders: 1 } },
+          { loader: "css-loader", options: { importLoaders: 1 } },
           {
-            loader: 'postcss-loader',
+            loader: "postcss-loader",
             options: postcssOptions
           },
-          'less-loader'
+          "less-loader"
         ]
       },
       {
         //编译处于node_modules中的css文件
         test: /\.css$/,
         include: /node_modules/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader']
+        use: [MiniCssExtractPlugin.loader, "css-loader"]
       },
       {
         test: /\.(js|jsx)$/,
-        enforce: 'post',
-        loaders: ['es3ify-loader'],
-        include: [path.resolve(process.cwd(), './src')]
+        enforce: "post",
+        loaders: ["es3ify-loader"],
+        include: [path.resolve(process.cwd(), "./src")]
       }
     ]
   },
@@ -99,8 +100,8 @@ module.exports = merge(baseConfig, {
     splitChunks: {
       cacheGroups: {
         commons: {
-          chunks: 'initial', //有三个值可能"initial"，"async"和"all"。配置时，优化只会选择初始块，按需块或所有块。
-          name: 'common', //名字
+          chunks: "initial", //有三个值可能"initial"，"async"和"all"。配置时，优化只会选择初始块，按需块或所有块。
+          name: "common", //名字
           minChunks: 2, //分割前的代码最大块数
           maxInitialRequests: 5, // entry(入口)的并行请求数
           minSize: 30000 // 最小值
@@ -131,7 +132,7 @@ module.exports = merge(baseConfig, {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'src/index.html',
+      template: "src/index.html",
       // 页面压缩相关配置
       minify: {
         removeComments: true,
@@ -151,11 +152,11 @@ module.exports = merge(baseConfig, {
       cssProcessorOptions: { safe: true }
     }),
     new PurifyCSSPlugin({
-      paths: glob.sync(path.resolve(process.cwd(), 'src/**/*.js'))
+      paths: glob.sync(path.resolve(process.cwd(), "src/**/*.js"))
     }),
     new MiniCssExtractPlugin({
-      filename: '[name].css',
-      chunkFilename: '[id].css'
+      filename: "[name].css",
+      chunkFilename: "[id].css"
     }),
     // new CopyWebpackPlugin([
     //   {
@@ -164,7 +165,7 @@ module.exports = merge(baseConfig, {
     //     ignore: ['.*']
     //   }
     // ]),
-    new CleanWebpackPlugin(['build'], {
+    new CleanWebpackPlugin(["build"], {
       root: path.resolve(process.cwd()),
       verbose: true,
       dry: false
@@ -180,6 +181,6 @@ module.exports = merge(baseConfig, {
     //   extensions: [".js", ".jsx", ".react.js"],
     //   alias: {} //配置别名可以加快webpack查找模块的速度
     // mainFields: ["browser", "jsnext:main", "main"]
-    mainFields: ['main']
+    mainFields: ["main"]
   }
 });

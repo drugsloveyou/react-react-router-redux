@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Router,
   Route,
@@ -6,9 +6,9 @@ import {
   browserHistory,
   Link,
   useRouterHistory
-} from 'react-router';
+} from "react-router";
 
-import { createHashHistory } from 'history';
+import { createHashHistory } from "history";
 
 const history = useRouterHistory(createHashHistory)({
   queryKey: false
@@ -61,6 +61,7 @@ export default class App extends React.Component {
             </Route>
             <Route path="test*" component={Test} />
           </Route>
+          <Route path="/user" component={() => <div>123sakjhdhsa</div>} />
         </Router>
       </div>
     );

@@ -2,8 +2,8 @@
  * 服务器部分参考了react-boilerplate的服务配置
  * @Author: xiezuobing(948466)[435321508@qq.com]
  * @Date: 2018-05-18 21:20:36
- * @Last Modified by: xiezuobing
- * @Last Modified time: 2018-06-11 16:19:06
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-06-19 21:38:19
  */
 const path = require('path');
 const webpack = require('webpack');
@@ -12,7 +12,6 @@ const webpackHotMiddleware = require('webpack-hot-middleware');
 const proxy = require('http-proxy-middleware'); //proxy
 
 const setupApi = require('./api');
-const handlebars = require('handlebars');
 
 function createWebpackMiddleware(compiler, publicPath) {
   return webpackDevMiddleware(compiler, {
